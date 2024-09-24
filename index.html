@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Page with Time</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('pic.gif') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            font-size: 24px;
+        }
+        .time-container {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="time-container">
+    <div id="current-time"></div>
+</div>
+
+<script>
+    function updateTime() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+        const now = new Date();
+        const timeString = now.toLocaleDateString('en-US', options);
+        document.getElementById('current-time').textContent = timeString.replace(', ', ' ').replace(',', '');
+    }
+
+    setInterval(updateTime, 1000); // Update time every second
+    updateTime(); // Call it immediately on load
+</script>
+
+</body>
+</html>
