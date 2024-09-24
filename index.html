@@ -2,34 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Static Page with Time</title>
     <style>
-        body {
+        html, body {
             margin: 0;
             padding: 0;
-            background: url('pic.GIF') no-repeat center center fixed;
-            background-size: cover;
-            height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: Arial, sans-serif;
-            color: white;
-            font-size: 24px;
+            background-color: black;
+        }
+        .container {
+            width: 1920px;
+            height: 1080px;
+            position: relative;
+            background: url('pic.GIF') no-repeat center center fixed;
+            background-size: cover;
         }
         .time-container {
             position: absolute;
             right: 20px;
             bottom: 20px;
             text-align: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
 
-<div class="time-container">
-    <div id="current-time"></div>
+<div class="container">
+    <div class="time-container">
+        <div id="current-time"></div>
+    </div>
 </div>
 
 <script>
