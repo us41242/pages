@@ -26,36 +26,49 @@
             background: url('pic.gif') no-repeat center center fixed;
             background-size: cover;
         }
-        .time-container {
+        .time {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-weight: 150; /* Thin font weight */
+            color: rgb(94, 94, 94);
+            font-size: 64px;
+        }
+        .date {
             position: absolute;
             right: 20px;
             bottom: 20px;
             text-align: center;
-            font-family: 'Montserrat Alternates', sans-serif; /* Updated font family */
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-weight: 200; /* Thin font weight */
             color: rgb(94, 94, 94);
-            font-weight: 100;
-            font-size: 74px;
+            font-size: 64px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="time-container">
-        <div id="current-time"></div>
-    </div>
+    <div class="time" id="current-time"></div>
+    <div class="date" id="current-date"></div>
 </div>
 
 <script>
     function updateTime() {
-        const options = { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+        const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+        const dateOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+
         const now = new Date();
-        const timeString = now.toLocaleDateString('en-US', options);
-        document.getElementById('current-time').textContent = timeString.replace(', ', ' ').replace(',', '');
+        const timeString = now.toLocaleTimeString('en-US', timeOptions);
+        const dateString = now.toLocaleDateString('en-US', dateOptions);
+
+        document.getElementById('current-time').textContent = timeString;
+        document.getElementById('current-date').textContent = dateString;
     }
 
-    setInterval(updateTime, 1000); // Update time every second
-    updateTime(); // Call it immediately on load
+    setInterval(updateTime, 1000); // Update every second
+    updateTime(); // Call on load
 </script>
 
 </body>
