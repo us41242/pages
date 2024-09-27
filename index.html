@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Static Page with Time</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <style>
         html, body {
             margin: 0;
@@ -28,9 +31,9 @@
             right: 20px;
             bottom: 20px;
             text-align: center;
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat Alternates', sans-serif; /* Updated font family */
             color: rgb(94, 94, 94);
-            font-size: 64px;
+            font-size: 74px;
         }
     </style>
 </head>
@@ -44,7 +47,7 @@
 
 <script>
     function updateTime() {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+        const options = { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
         const now = new Date();
         const timeString = now.toLocaleDateString('en-US', options);
         document.getElementById('current-time').textContent = timeString.replace(', ', ' ').replace(',', '');
