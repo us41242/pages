@@ -59,9 +59,9 @@
             font-family: 'Montserrat Alternates', sans-serif;
             font-weight: 400;
             color: rgb(94, 94, 94);
-            font-size: 64px;
+            font-size: 94px;
             white-space: nowrap;
-            animation: scroll-left 15s linear infinite;
+            animation: scroll-left 55s linear infinite;
         }
         @keyframes scroll-left {
             0% {
@@ -97,7 +97,7 @@
     }
 
     function fetchNews() {
-        const rssUrl = 'https://www.reviewjournal.com/feed/'; // Other feeds are  https://lasvegassun.com/feed/
+        const rssUrl = 'https://lasvegassun.com/feed/'; // Other feeds are  https://lasvegassun.com/feed/
 
         fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`)
             .then(response => response.json())
