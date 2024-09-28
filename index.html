@@ -31,9 +31,8 @@
             left: 20px;
             top: 20px;
             font-family: 'Montserrat Alternates', sans-serif;
-            font-weight: bold; /* Bold for time */
             color: rgb(94, 94, 94);
-            font-size: 64px;
+            font-size: 84px;
         }
         .date {
             position: absolute;
@@ -58,12 +57,11 @@
             display: inline-block;
             font-family: 'Montserrat Alternates', sans-serif;
             font-weight: 400;
-            color: white;
+            color: rgb(94, 94, 94);
             font-size: 115px;
             white-space: nowrap;
-            animation: scroll-left 45s linear infinite; /* Increased from 15s to 45s */
+            animation: scroll-left 15s linear infinite;
         }
-        
         @keyframes scroll-left {
             0% {
                 transform: translateX(100%);
@@ -98,28 +96,35 @@
     }
 
     function fetchNews() {
-        const rssUrl = 'https://lasvegassun.com/feed/'; 
+    const rssUrl = 'https://www.ktnv.com/feeds/rssFeed'; // URL of the RSS feed
 
-        fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`)
-            .then(response => response.json())
-            .then(data => {
-                const headlinesElement = document.getElementById('news-headlines');
-                headlinesElement.innerHTML = '';
+    fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`)
+        .then(response => response.json())
+        .then(data => {
+            const headlinesElement = document.getElementById('news-headlines');
+            headlinesElement.innerHTML = '';
 
-                data.items.slice(0, 5).forEach((article, index) => {
-                    const headline = document.createElement('span');
-                    headline.textContent = article.title;
-                    if (index < 4) {
-                        headline.textContent += ' | ';  // Separate headlines with a pipe symbol
-                    }
-                    headlinesElement.appendChild(headline);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching news:', error);
-                document.getElementById('news-headlines').textContent = 'Failed to load news';
+            data.items.slice(0, 5).forEach((article, index) => {
+                const headline = document.createElement('span');
+                headline.textContent = article.title;
+                if (index < 4) {
+                    headline.textContent += ' | ';  // Separate headlines with a pipe symbol
+                }
+                headlinesElement.appendChild(headline);
             });
-    }
+
+            // Schedule next fetch in 7 minutes (420,000 milliseconds)
+            setTimeout(fetchNews, 7 * 60 * 1000); // 7 minutes
+        })
+        .catch(error => {
+            console.error('Error fetching news:', error);
+            document.getElementById('news-headlines').textContent = 'Failed to load news';
+
+            // Retry in 60 seconds if there was an error
+            setTimeout(fetchNews, 60 * 1000); // 60 seconds
+        });
+}
+
 
     setInterval(updateTime, 1000); // Update every second
     updateTime(); // Call on load
