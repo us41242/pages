@@ -36,8 +36,8 @@
         }
         .date {
             position: absolute;
-            right: 30px;
-            bottom: 30px;
+            right: 20px;
+            bottom: 20px;
             text-align: center;
             font-family: 'Montserrat Alternates', sans-serif;
             color: rgb(94, 94, 94);
@@ -60,7 +60,8 @@
             color: rgb(94, 94, 94);
             font-size: 115px;
             white-space: nowrap;
-            animation: scroll-left 45s linear infinite; /* Adjust speed as needed */
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
         }
         @keyframes scroll-left {
             0% {
@@ -93,23 +94,25 @@
 <div class="container">
     <div class="time" id="current-time"></div>
     <div class="date" id="current-date"></div>
-    <div class="news-container">
-        <div class="news-headlines" id="news-headlines">Loading news...</div>
+    <div class="news-container" id="news-container-1">
+        <div class="news-headlines" id="news-headlines-1">Loading news...</div>
     </div>
     <div class="image-container" id="image-container"></div>
+    <div class="news-container" id="news-container-2">
+        <div class="news-headlines" id="news-headlines-2">Loading news...</div>
+    </div>
 </div>
 
 <script>
     const rssFeeds = {
-        news: [
-            'https://www.reviewjournal.com/feed/', // Las Vegas Review-Journal
-            'https://vitalvegas.com/feed/' // Vital Vegas
-        ],
-        images: 'https://vintagelasvegas.com/rss' // Vintage Las Vegas
+        reviewJournal: 'https://www.reviewjournal.com/feed/', // Las Vegas Review-Journal
+        vitalVegas: 'https://vitalvegas.com/feed/', // Vital Vegas
+        images: 'https://vintagelasvegas.com/rss' // Vintage Las Vegas images
     };
 
     let currentImageIndex = 0; // To track current image being displayed
     let images = []; // To store fetched images
+    let displaySequence = 0; // To manage the sequence of news-image-news display
 
     function updateTime() {
         const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
@@ -123,17 +126,16 @@
         document.getElementById('current-date').textContent = dateString;
     }
 
-    function fetchHeadlines() {
-        Promise.all(rssFeeds.news.map(url => fetch(`https://api.rss2json.com/v1/api.json?rss_url=${url}`)))
-            .then(responses => Promise.all(responses.map(res => res.json())))
-            .then(dataArrays => {
-                const headlinesElement = document.getElementById('news-headlines');
+    function fetchHeadlines(feedUrl, elementId) {
+        return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${feedUrl}`)
+            .then(res => res.json())
+            .then(data => {
+                const headlinesElement = document.getElementById(elementId);
                 headlinesElement.innerHTML = '';
 
-                // Collect titles from both news feeds
-                const titles = dataArrays.flatMap(data => data.items.map(item => item.title));
+                const titles = data.items.map(item => item.title);
                 
-                titles.slice(0, 5).forEach((title, index) => {
+                titles.forEach((title, index) => {
                     const headline = document.createElement('span');
                     headline.textContent = title;
                     if (index < titles.length - 1) {
@@ -141,38 +143,23 @@
                     }
                     headlinesElement.appendChild(headline);
                 });
-
-                // Schedule next fetch in 7 minutes (420,000 milliseconds)
-                setTimeout(fetchHeadlines, 7 * 60 * 1000); // 7 minutes
             })
             .catch(error => {
                 console.error('Error fetching news:', error.message);
-                document.getElementById('news-headlines').textContent = 'Failed to load news: ' + error.message;
-
-                // Retry in 60 seconds if there was an error
-                setTimeout(fetchHeadlines, 60 * 1000); // 60 seconds
+                document.getElementById(elementId).textContent = 'Failed to load news: ' + error.message;
             });
     }
 
     function fetchImages() {
         fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssFeeds.images}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                images = data.items.map(item => item.enclosure.link); // Store image URLs
+                images = data.items.map(item => item.enclosure.link);
                 currentImageIndex = 0; // Reset to the first image
-                displayNextImage(); // Start displaying images
             })
             .catch(error => {
                 console.error('Error fetching images:', error.message);
                 document.getElementById('image-container').textContent = 'Failed to load images: ' + error.message;
-
-                // Retry in 60 seconds if there was an error
-                setTimeout(fetchImages, 60 * 1000); // 60 seconds
             });
     }
 
@@ -190,158 +177,58 @@
                 }, 4000); // Display for 4 seconds before fading out
 
                 currentImageIndex = (currentImageIndex + 1) % images.length; // Move to next image
-                setTimeout(displayNextImage, 6000); // Wait 6 seconds before showing the next image (4s fade out + 2s fade in)
             };
             imageContainer.appendChild(imgElement);
         }
+    }
 
-        // Schedule next image fetch in 7 minutes
-        setTimeout(fetchImages, 7 * 60 * 1000); // 7 minutes
+    function runDisplaySequence() {
+        const news1 = document.getElementById('news-headlines-1');
+        const news2 = document.getElementById('news-headlines-2');
+        const imageContainer = document.getElementById('image-container');
+
+        // Hide all elements initially
+        news1.style.opacity = 0;
+        imageContainer.style.opacity = 0;
+        news2.style.opacity = 0;
+
+        if (displaySequence === 0) {
+            // Show first news feed
+            news1.style.opacity = 1;
+            news1.style.animation = 'scroll-left 45s linear infinite';
+            setTimeout(() => {
+                news1.style.opacity = 0;
+                displaySequence = 1;
+                runDisplaySequence(); // Next step
+            }, 10000); // Display for 10 seconds
+        } else if (displaySequence === 1) {
+            // Show image
+            displayNextImage();
+            imageContainer.style.opacity = 1;
+            setTimeout(() => {
+                imageContainer.style.opacity = 0;
+                displaySequence = 2;
+                runDisplaySequence(); // Next step
+            }, 8000); // Display image for 8 seconds
+        } else if (displaySequence === 2) {
+            // Show second news feed
+            news2.style.opacity = 1;
+            news2.style.animation = 'scroll-left 45s linear infinite';
+            setTimeout(() => {
+                news2.style.opacity = 0;
+                displaySequence = 0; // Reset to start of sequence
+                runDisplaySequence(); // Next step
+            }, 10000); // Display for 10 seconds
+        }
     }
 
     setInterval(updateTime, 1000); // Update time every second
     updateTime(); // Call on load
-    fetchHeadlines(); // Fetch news headlines immediately on load
-    fetchImages(); // Fetch images immediately on load
-</script>
 
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Static Page with Time and Scrolling News</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* Prevent scrolling */
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: black;
-        }
-        .container {
-            width: 1920px;
-            height: 1080px;
-            position: relative;
-            background: url('pic.gif') no-repeat center center fixed;
-            background-size: cover;
-        }
-        .time {
-            position: absolute;
-            left: 30px;
-            top: 30px;
-            font-family: 'Montserrat Alternates', sans-serif;
-            color: rgb(94, 94, 94);
-            font-size: 84px;
-        }
-        .date {
-            position: absolute;
-            right: 30px;
-            bottom: 30px;
-            text-align: center;
-            font-family: 'Montserrat Alternates', sans-serif;
-            color: rgb(94, 94, 94);
-            font-size: 64px;
-        }
-        /* Scrolling news styling */
-        .news-container {
-            position: absolute;
-            width: 100%;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .news-headlines {
-            display: inline-block;
-            font-family: 'Montserrat Alternates', sans-serif;
-            font-weight: 400;
-            color: rgb(94, 94, 94);
-            font-size: 115px;
-            white-space: nowrap;
-            animation: scroll-left 45s linear infinite;
-        }
-        @keyframes scroll-left {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-    </style>
-</head>
-<body>
+    // Fetch news and images initially
+    fetchHeadlines(rssFeeds.reviewJournal, 'news-headlines-1');
+    fetchHeadlines(rssFeeds.vitalVegas, 'news-headlines-2');
+    fetchImages();
 
-<div class="container">
-    <div class="time" id="current-time"></div>
-    <div class="date" id="current-date"></div>
-    <div class="news-container">
-        <div class="news-headlines" id="news-headlines">Loading news...</div>
-    </div>
-</div>
-
-<script>
-    function updateTime() {
-        const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
-        const dateOptions = { weekday: 'long', month: 'long', day: 'numeric' };
-
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('en-US', timeOptions);
-        const dateString = now.toLocaleDateString('en-US', dateOptions);
-
-        document.getElementById('current-time').textContent = timeString;
-        document.getElementById('current-date').textContent = dateString;
-    }
-
-    function fetchNews() {
-    const rssUrl = 'https://www.reviewjournal.com/feed/'; // URL of the RSS feed
-    
-        fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const headlinesElement = document.getElementById('news-headlines');
-                headlinesElement.innerHTML = '';
-    
-                data.items.slice(0, 5).forEach((article, index) => {
-                    const headline = document.createElement('span');
-                    headline.textContent = article.title;
-                    if (index < 4) {
-                        headline.textContent += ' | ';  // Separate headlines with a pipe symbol
-                    }
-                    headlinesElement.appendChild(headline);
-                });
-    
-                // Schedule next fetch in 7 minutes (420,000 milliseconds)
-                setTimeout(fetchNews, 7 * 60 * 1000); // 7 minutes
-            })
-            .catch(error => {
-                console.error('Error fetching news:', error.message);
-                document.getElementById('news-headlines').textContent = 'Failed to load news: ' + error.message;
-    
-                // Retry in 60 seconds if there was an error
-                setTimeout(fetchNews, 60 * 1000); // 60 seconds
-            });
-    }
-    
-    setInterval(updateTime, 1000); // Update every second
-    updateTime(); // Call on load
-    fetchNews(); // Fetch news on load
-</script>
-
-</body>
-</html>
+    // Start display sequence
+    setTimeout(runDisplaySequence, 2000
