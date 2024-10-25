@@ -25,20 +25,21 @@
             z-index: 1; /* Behind the text */
         }
         .container {
-            position: relative;
+            position: absolute; /* Use absolute positioning */
+            bottom: 30px; /* Distance from the bottom */
+            left: 30px; /* Distance from the left */
             z-index: 2; /* In front of the canvas */
             display: flex;
-            justify-content: center; /* Centered the time and date */
-            align-items: center;
-            padding: 30px;
+            flex-direction: column; /* Stack time and date vertically */
+            align-items: flex-start; /* Align items to the start (left) */
             color: rgba(0, 255, 255, 0.8); /* Text color */
             font-family: 'Roboto', sans-serif;
-            font-size: 60px; /* Smaller font size */
+            font-size: 64px; /* Smaller font size */
             text-shadow: 
                 0 0 5px rgba(0, 255, 255, 0.8), /* Glow effect */
                 0 0 10px rgba(0, 255, 255, 0.6);
             -webkit-text-stroke: 1px black; /* Outline effect */
-            text-stroke: 1px black; /* For non-webkit browsers */
+    text-stroke: 1px black; /* For non-webkit browsers */
         }
     </style>
 </head>
