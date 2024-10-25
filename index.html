@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Static Page with Time and Scrolling News</title>
+    <title>Static Page with Time and Floating Lines Background</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
@@ -11,108 +11,123 @@
         html, body {
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevent scrolling */
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden; /* Prevent scrolling */
             background-color: black;
         }
-        .container {
-            width: 1920px;
-            height: 1080px;
-            position: relative;
-            background: url('pic.gif') no-repeat center center fixed;
-            background-size: cover;
-        }
-        .time {
+        canvas {
             position: absolute;
-            left: 30px;
-            top: 30px;
-            font-family: 'Montserrat Alternates', sans-serif;
-            color: rgb(94, 94, 94);
-            font-size: 84px;
-        }
-        .date {
-            position: absolute;
-            right: 20px;
-            bottom: 20px;
-            text-align: center;
-            font-family: 'Montserrat Alternates', sans-serif;
-            color: rgb(94, 94, 94);
-            font-size: 64px;
-        }
-        /* Scrolling news styling */
-        .news-container {
-            position: absolute;
-            width: 100%;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .news-headlines {
-            display: inline-block;
-            font-family: 'Montserrat Alternates', sans-serif;
-            font-weight: 400;
-            color: rgb(94, 94, 94);
-            font-size: 115px;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-        @keyframes scroll-left {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-        .image-container {
-            margin: 20px 0;
-            text-align: center;
-            position: relative; /* Needed for positioning child elements */
-            height: 300px; /* Set a height for the image container */
-            overflow: hidden; /* Hide overflowed images */
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            opacity: 0;
-            position: absolute; /* Position absolute for fading effect */
             top: 0;
             left: 0;
-            transition: opacity 2s ease-in-out; /* Fade transition */
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Behind the text */
+        }
+        .container {
+            position: relative;
+            z-index: 2; /* In front of the canvas */
+            display: flex;
+            justify-content: center; /* Centered the time and date */
+            align-items: center;
+            padding: 30px;
+            color: rgba(0, 255, 255, 0.8); /* Same color as the lines */
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-size: 32px; /* Smaller font size */
         }
     </style>
 </head>
 <body>
 
+<canvas id="floating-lines"></canvas>
+
 <div class="container">
     <div class="time" id="current-time"></div>
     <div class="date" id="current-date"></div>
-    <div class="news-container" id="news-container-1">
-        <div class="news-headlines" id="news-headlines-1">Loading news...</div>
-    </div>
-    <div class="image-container" id="image-container"></div>
-    <div class="news-container" id="news-container-2">
-        <div class="news-headlines" id="news-headlines-2">Loading news...</div>
-    </div>
 </div>
 
 <script>
-    const rssFeeds = {
-        reviewJournal: 'https://www.reviewjournal.com/feed/', // Las Vegas Review-Journal
-        vitalVegas: 'https://vitalvegas.com/feed/', // Vital Vegas
-        images: 'https://vintagelasvegas.com/rss' // Vintage Las Vegas images
-    };
+    const canvas = document.getElementById('floating-lines');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    let currentImageIndex = 0; // To track current image being displayed
-    let images = []; // To store fetched images
-    let displaySequence = 0; // To manage the sequence of news-image-news display
+    let lines = [];
+    const lineCount = 100; // Number of lines
+    const maxDistance = 150; // Max distance at which lines "connect"
+    const speed = 0.5; // Movement speed of the lines
+
+    // Create a line object
+    function createLine() {
+        return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            dx: (Math.random() - 0.5) * speed, // Random direction for X
+            dy: (Math.random() - 0.5) * speed, // Random direction for Y
+            radius: 2 // Line's "head" radius
+        };
+    }
+
+    // Initialize lines
+    for (let i = 0; i < lineCount; i++) {
+        lines.push(createLine());
+    }
+
+    // Move the lines
+    function updateLines() {
+        for (let line of lines) {
+            line.x += line.dx;
+            line.y += line.dy;
+
+            // Bounce off walls
+            if (line.x < 0 || line.x > canvas.width) line.dx *= -1;
+            if (line.y < 0 || line.y > canvas.height) line.dy *= -1;
+        }
+    }
+
+    // Draw the lines and the connections
+    function drawLines() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+
+            // Draw the line's "head"
+            ctx.beginPath();
+            ctx.arc(line.x, line.y, line.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
+            ctx.fill();
+
+            // Draw connections between lines within a certain distance
+            for (let j = i + 1; j < lines.length; j++) {
+                const otherLine = lines[j];
+                const distance = Math.hypot(line.x - otherLine.x, line.y - otherLine.y);
+
+                if (distance < maxDistance) {
+                    ctx.beginPath();
+                    ctx.moveTo(line.x, line.y);
+                    ctx.lineTo(otherLine.x, otherLine.y);
+                    ctx.strokeStyle = `rgba(0, 255, 255, ${1 - distance / maxDistance})`; // Fade connection based on distance
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    // Main animation loop
+    function animate() {
+        updateLines();
+        drawLines();
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Adjust canvas size if the window is resized
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
 
     function updateTime() {
         const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
@@ -122,113 +137,11 @@
         const timeString = now.toLocaleTimeString('en-US', timeOptions);
         const dateString = now.toLocaleDateString('en-US', dateOptions);
 
-        document.getElementById('current-time').textContent = timeString;
-        document.getElementById('current-date').textContent = dateString;
-    }
-
-    function fetchHeadlines(feedUrl, elementId) {
-        return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${feedUrl}`)
-            .then(res => res.json())
-            .then(data => {
-                const headlinesElement = document.getElementById(elementId);
-                headlinesElement.innerHTML = '';
-
-                const titles = data.items.map(item => item.title);
-                
-                titles.forEach((title, index) => {
-                    const headline = document.createElement('span');
-                    headline.textContent = title;
-                    if (index < titles.length - 1) {
-                        headline.textContent += ' | ';  // Separate headlines with a pipe symbol
-                    }
-                    headlinesElement.appendChild(headline);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching news:', error.message);
-                document.getElementById(elementId).textContent = 'Failed to load news: ' + error.message;
-            });
-    }
-
-    function fetchImages() {
-        fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssFeeds.images}`)
-            .then(response => response.json())
-            .then(data => {
-                images = data.items.map(item => item.enclosure.link);
-                currentImageIndex = 0; // Reset to the first image
-            })
-            .catch(error => {
-                console.error('Error fetching images:', error.message);
-                document.getElementById('image-container').textContent = 'Failed to load images: ' + error.message;
-            });
-    }
-
-    function displayNextImage() {
-        const imageContainer = document.getElementById('image-container');
-        imageContainer.innerHTML = ''; // Clear previous images
-
-        if (images.length > 0) {
-            const imgElement = document.createElement('img');
-            imgElement.src = images[currentImageIndex];
-            imgElement.onload = () => {
-                imgElement.style.opacity = 1; // Fade in image
-                setTimeout(() => {
-                    imgElement.style.opacity = 0; // Fade out image
-                }, 4000); // Display for 4 seconds before fading out
-
-                currentImageIndex = (currentImageIndex + 1) % images.length; // Move to next image
-            };
-            imageContainer.appendChild(imgElement);
-        }
-    }
-
-    function runDisplaySequence() {
-        const news1 = document.getElementById('news-headlines-1');
-        const news2 = document.getElementById('news-headlines-2');
-        const imageContainer = document.getElementById('image-container');
-
-        // Hide all elements initially
-        news1.style.opacity = 0;
-        imageContainer.style.opacity = 0;
-        news2.style.opacity = 0;
-
-        if (displaySequence === 0) {
-            // Show first news feed
-            news1.style.opacity = 1;
-            news1.style.animation = 'scroll-left 45s linear infinite';
-            setTimeout(() => {
-                news1.style.opacity = 0;
-                displaySequence = 1;
-                runDisplaySequence(); // Next step
-            }, 10000); // Display for 10 seconds
-        } else if (displaySequence === 1) {
-            // Show image
-            displayNextImage();
-            imageContainer.style.opacity = 1;
-            setTimeout(() => {
-                imageContainer.style.opacity = 0;
-                displaySequence = 2;
-                runDisplaySequence(); // Next step
-            }, 8000); // Display image for 8 seconds
-        } else if (displaySequence === 2) {
-            // Show second news feed
-            news2.style.opacity = 1;
-            news2.style.animation = 'scroll-left 45s linear infinite';
-            setTimeout(() => {
-                news2.style.opacity = 0;
-                displaySequence = 0; // Reset to start of sequence
-                runDisplaySequence(); // Next step
-            }, 10000); // Display for 10 seconds
-        }
+        document.getElementById('current-time').textContent = timeString + ' | ' + dateString; // Combined into one line
     }
 
     setInterval(updateTime, 1000); // Update time every second
     updateTime(); // Call on load
-
-    // Fetch news and images initially
-    fetchHeadlines(rssFeeds.reviewJournal, 'news-headlines-1');
-    fetchHeadlines(rssFeeds.vitalVegas, 'news-headlines-2');
-    fetchImages();
-
-    // Start display sequence
-    setTimeout(runDisplaySequence, 2000
+</script>
+</body>
+</html>
