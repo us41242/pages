@@ -31,9 +31,14 @@
             justify-content: center; /* Centered the time and date */
             align-items: center;
             padding: 30px;
-            color: rgba(0, 255, 255, 0.8); /* Same color as the lines */
+            color: rgba(0, 255, 255, 0.8); /* Text color */
             font-family: 'Montserrat Alternates', sans-serif;
             font-size: 32px; /* Smaller font size */
+            text-shadow: 
+                0 0 5px rgba(0, 255, 255, 0.8), /* Glow effect */
+                0 0 10px rgba(0, 255, 255, 0.6);
+            -webkit-text-stroke: 1px black; /* Outline effect */
+            text-stroke: 1px black; /* For non-webkit browsers */
         }
     </style>
 </head>
@@ -43,7 +48,6 @@
 
 <div class="container">
     <div class="time" id="current-time"></div>
-    <div class="date" id="current-date"></div>
 </div>
 
 <script>
