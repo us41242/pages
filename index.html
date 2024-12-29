@@ -6,14 +6,6 @@
     <title>Video Background with Time</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.google<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Video Background with Time</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@400;700&display=swap" rel="stylesheet">
     <style>
         html, body {
@@ -22,10 +14,10 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: black;
+            background-color: black; /* Default background is black */
             position: relative;
         }
-        video, img {
+        video {
             position: absolute;
             top: 0;
             left: 0;
@@ -33,6 +25,7 @@
             height: 100%;
             object-fit: cover;
             z-index: 0;
+            display: none; /* Hidden by default */
         }
         .container {
             position: absolute;
@@ -51,7 +44,6 @@
     <source src="video.mov" type="video/mp4">
     Your browser does not support the video tag.
 </video>
-<img src="black.png" alt="Black Background" id="background-image" style="display: none;">
 
 <div class="container">
     <div class="time" id="current-time"></div>
@@ -63,14 +55,14 @@
         const hours = now.getHours();
 
         const video = document.getElementById('background-video');
-        const image = document.getElementById('background-image');
+        const body = document.body;
 
         if (hours >= 8 && hours < 22) {
-            video.style.display = 'block';
-            image.style.display = 'none';
+            video.style.display = 'block'; // Show the video
+            body.style.backgroundColor = 'transparent'; // Remove solid black background
         } else {
-            video.style.display = 'none';
-            image.style.display = 'block';
+            video.style.display = 'none'; // Hide the video
+            body.style.backgroundColor = 'black'; // Set solid black background
         }
     }
 
@@ -94,66 +86,5 @@
     updateTime();
 </script>
 
-</body>
-</html>
-apis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-<style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden; /* Prevent scrolling */
-        background-color: black;
-        position: relative; /* Allow absolute positioning of children */
-    }
-    video {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Cover the whole screen */
-        z-index: 0; /* Behind the text */
-    }
-    .container {
-        position: absolute; /* Use absolute positioning */
-        bottom: 30px; /* Distance from the bottom */
-        left: 30px; /* Distance from the left */
-        z-index: 1; /* In front of the video */
-        color: #5c5858; /* Very dark gray text color */
-        font-family: 'Montserrat Alternates', sans-serif;
-        font-size: 96px; /* Font size */
-        text-shadow: none; /* No glow for subtle visibility */
-    }
-</style>
-
-</head>
-<body>
-
-<video autoplay muted loop>
-    <source src="video.mov" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
-
-<div class="container">
-    <div class="time" id="current-time"></div>
-</div>
-
-<script>
-    function updateTime() {
-        const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
-        const dateOptions = { weekday: 'long', month: 'long', day: 'numeric' };
-
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('en-US', timeOptions);
-        const dateString = now.toLocaleDateString('en-US', dateOptions);
-
-        document.getElementById('current-time').textContent = timeString + ' | ' + dateString; // Combined into one line
-    }
-
-    setInterval(updateTime, 1000); // Update time every second
-    updateTime(); // Call on load
-</script>
 </body>
 </html>
