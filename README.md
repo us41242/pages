@@ -1,35 +1,63 @@
-# Bellagio Fountains Night Screensaver
+# Bellagio Fountains Screensaver
 
-## Overview
+[![Status: Live](https://img.shields.io/badge/Status-Live-success)](https://us41242.github.io/pages/)
 
-This project provides a simple, yet elegant web page designed to function as a **dark screensaver**. It is specifically intended for use on a portable **Android TV Box** within hotel environments, offering a subtle, dark background while clearly displaying the current date and time.
+A dark screensaver featuring a continuous night loop of the Bellagio Fountains in Las Vegas.
 
-The visual component is a continuous, looped video of the Bellagio Fountains in Las Vegas, captured at night.
+Designed primarily for Android TV boxes in hotel environments, this web-based screensaver displays the current date and time over a subtle, high-quality video background.
 
-> **Note:** This page is designed to be used with the Android application **Dashboard Screen Saver**, which brings in this URL to display the page as a screensaver.
-
----
-
-## Screensaver Features
-
-* **Dark-Themed:** Optimized for a low-light environment, perfect for night use in hotel rooms.
-* **Time & Date Overlay:** The current date and time are prominently displayed on the screen:
-    * **Top Display:** Time and Date are shown on the top edge of the video.
-    * **Bottom Ticker:** The Time and Date are also displayed in a large font spanning the full width of the lower portion of the screen.
-* **Looped Video:** Features a smooth, continuous loop of the iconic Bellagio Fountains show at night.
-* **Portable Use:** Designed to be used as a web feed within a dedicated screensaver application on Android TV/Media Boxes.
+## Live Demo
+[Click here to view the screensaver](https://us41242.github.io/pages/)
 
 ---
 
-## Repository Contents
+## Features
 
-The files in this repository provide the structure, styling, logic, and visual asset needed for the screensaver:
+* **Seamless Loop**: High-quality night footage of the iconic Bellagio Fountains.
+* **Dual Time Display**:
+    * **Header**: Standard Date & Time displayed at the top.
+    * **Ticker**: Large, scrolling Date & Time at the bottom for visibility from a distance.
+* **Dark Mode**: Optimized for low-light environments (suitable for sleeping rooms).
+* **Lightweight**: Built with a single HTML file containing all logic and styling.
 
-| File Type | Purpose |
+---
+
+## How to Use
+
+### On Android TV
+This project is designed to work with the **Dashboard Screen Saver** app (or any web-based screensaver app).
+
+1.  Install **Dashboard Screen Saver** on your Android TV device.
+2.  Open the settings and locate the option to set a **URL source**.
+3.  Enter the following URL:
+    ```
+    [https://us41242.github.io/pages/](https://us41242.github.io/pages/)
+    ```
+4.  Set the inactivity timeout as desired.
+
+### On Desktop / Browser
+Simply open the Live Demo link in any modern web browser (Chrome, Firefox, Safari) and press F11 to enter Fullscreen mode.
+
+---
+
+## File Structure
+
+| File | Description |
 | :--- | :--- |
-| **HTML File** | The core document (`index.html` or similar) containing the video element and date/time containers. |
-| **CSS File** | Defines the dark theme, video sizing, and the exact positioning and font for the time and date elements. |
-| **JavaScript File** | The script that continuously fetches and updates the current date and time on the screen. |
-| **Video File** | The looped video asset (e.g., `.mp4`, `.webm`) of the Bellagio Fountains at night. |
+| `index.html` | The core application. Contains the HTML structure, CSS for the dark overlay, and JavaScript for the real-time clock. |
+| `video.mov` | The looped video file of the Bellagio fountains. |
+| `black.png` | Used as a semi-transparent overlay to darken the video and improve text readability. |
 
 ---
+
+## Customization
+
+To use your own video:
+1.  **Fork** this repository.
+2.  Replace `video.mov` with your own video file (ensure it keeps the same name or update `index.html` to match).
+3.  Commit your changes, and GitHub Pages will update automatically.
+
+---
+
+## License
+This project is open source. Feel free to use it for your personal setup.
