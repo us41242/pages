@@ -36,7 +36,7 @@ This project is designed to work with the **Dashboard Screen Saver** app (or any
 4.  Set the inactivity timeout as desired.
 
 ### On Desktop / Browser
-Note: The [WebViewScreenSaver](https://github.com/liquidx/webviewscreensaver) works perfectly for use on a computer as well.
+The [WebViewScreenSaver](https://github.com/liquidx/webviewscreensaver) works perfectly for use on a computer as well.
 ---
 
 ## File Structure
