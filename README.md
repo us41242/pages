@@ -36,8 +36,7 @@ This project is designed to work with the **Dashboard Screen Saver** app (or any
 4.  Set the inactivity timeout as desired.
 
 ### On Desktop / Browser
-Simply open the Live Demo link in any modern web browser (Chrome, Firefox, Safari) and press F11 to enter Fullscreen mode.
-
+Note: The [WebViewScreenSaver](https://github.com/liquidx/webviewscreensaver) works perfectly for use on a computer as well.
 ---
 
 ## File Structure
